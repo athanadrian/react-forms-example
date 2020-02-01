@@ -93,33 +93,101 @@ const StyledError = styled.div`
   margin: 0 0 40px 0;
 `;
 
+const initialState = {
+  name: "",
+  email: "",
+  gender: "",
+  message: ""
+};
+
 function App() {
+  const [state, setState] = useState(initialState);
+  const [error, setError] = useState("");
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    console.log("submited");
+    console.log("STATE: ", state);
+
+    for (let key in state) {
+      if (state[key] === "") {
+        setError(`You must provide the ${key}!`);
+        return;
+      }
+    }
+    setError("");
+    setState({
+      name: "",
+      email: "",
+      gender: "",
+      message: ""
+    });
+    console.log("Successfully Submited!!");
+  };
+
+  const handleInput = e => {
+    const inputName = e.target.name;
+    const value = e.target.value;
+
+    setState(prev => ({ ...prev, [inputName]: value }));
+  };
+
   return (
     <>
       <GlobalStyle />
       <StyledFormWrapper>
-        <StyledForm>
+        <StyledForm onSubmit={handleSubmit}>
           <h2>Example Contact Form</h2>
           <label htmlFor="name">Name</label>
-          <StyledInput type="text" name="name" />
+          <StyledInput
+            type="text"
+            name="name"
+            value={state.name}
+            onChange={handleInput}
+          />
           <label htmlFor="email">Email</label>
-          <StyledInput type="email" name="email" />
+          <StyledInput
+            type="email"
+            name="email"
+            value={state.email}
+            onChange={handleInput}
+          />
           <StyledFieldset>
             <legend>Gender</legend>
             <label>
-              <input type="radio" name="female" />
+              <input
+                type="radio"
+                name="gender"
+                value="female"
+                checked={state.gender === "female"}
+                onChange={handleInput}
+              />
               Female
             </label>
             <label>
-              <input type="radio" name="male" />
+              <input
+                type="radio"
+                name="gender"
+                value="male"
+                checked={state.gender === "male"}
+                onChange={handleInput}
+              />
               Male
             </label>
           </StyledFieldset>
-          <label htmlFor="message">Message</label>
-          <StyledTextArea name="message" />
-          <StyledError>
-            <p>Error Message Here!</p>
-          </StyledError>
+          <label htmlFor="message" value={state.message} onChange={handleInput}>
+            Message
+          </label>
+          <StyledTextArea
+            name="message"
+            value={state.message}
+            onChange={handleInput}
+          />
+          {error && (
+            <StyledError>
+              <p>{error}</p>
+            </StyledError>
+          )}
           <StyledButton type="submit">Send Message</StyledButton>
         </StyledForm>
       </StyledFormWrapper>
